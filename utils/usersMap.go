@@ -6,12 +6,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func GetUsers(s *discordgo.Session) ([]discordgo.User, error) {
-	var users []discordgo.User
+func GetUsers(s *discordgo.Session) ([]string, error) {
+	var users []string
 
 	for _, guild := range s.State.Guilds {
 		for _, member := range guild.Members {
-			users = append(users, *member.User)
+			users = append(users, member.User.ID)
 		}
 	}
 

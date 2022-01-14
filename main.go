@@ -46,10 +46,11 @@ func main() {
 	}
 
 	// Defining intents
-	session.Identify.Intents = discordgo.IntentsGuildMembers | discordgo.IntentsGuilds | discordgo.IntentsGuildMessages
+	// session.Identify.Intents = discordgo.IntentsGuildMembers | discordgo.IntentsGuilds | discordgo.IntentsGuildMessages
+	session.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 	// // Adding handlers
 	session.AddHandler(handlers.MessageCreate)
-	// session.AddHandler(handlers.Ready)
+	session.AddHandler(handlers.Ready)
 
 	// Starts discord session
 	err = session.Open()

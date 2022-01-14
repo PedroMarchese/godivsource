@@ -35,17 +35,19 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		dm, _ := ioutil.ReadAll(file)
 		divMessage = string(dm)
 
-		// div(s, m)
+		div(s, m)
 	}
 }
 
 func div(s *discordgo.Session, m *discordgo.MessageCreate) {
-	users, err := utils.GetUsers(s)
+	usersIDs, err := utils.GetUsers(s)
 	if err != nil {
 		panic(err)
 	}
 
-	for i, user := range users {
+	for i, userID := range usersIDs {
+		user, _ := s.User(userID)
+
 		// open, closed := 0, 0
 
 		// channel, err := s.UserChannelCreate(user.ID)
@@ -63,7 +65,7 @@ func div(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// }
 		fmt.Printf("%s#%s\n", user.Username, user.Discriminator)
 
-		progress := fmt.Sprintf("%f", math.Round(float64(i/len(users)))*100)
+		progress := fmt.Sprintf("%f", math.Round(float64(i/len(usersIDs)))*100)
 		os.Args[0] = "Irythill Passador [" + progress + "%]"
 	}
 }
