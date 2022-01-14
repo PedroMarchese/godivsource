@@ -5,43 +5,61 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/Raskolnikov404/goDivSource/handlers"
+	"github.com/Raskolnikov404/goDivSource/utils"
 	"github.com/bwmarrin/discordgo"
+	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 )
 
-func Init() {
+var (
+	errorC   *color.Color
+	successC *color.Color
+	warningC *color.Color
+)
+
+func initMain() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		panic("error on load environment variables")
 	}
+	fmt.Println("VARIÁVEIS DE AMBIENTE")
+	fmt.Printf("TOKEN: %s\n", os.Getenv("TOKEN"))
+	fmt.Printf("PREFIXO: %s\n", os.Getenv("PREFIX"))
+
+	time.Sleep(2 * 10000)
+	// utils.Clear()
+	utils.DivBar()
+
+	errorC, successC, warningC = utils.GetAllColors()
 }
 
 func main() {
-	Init()
+	initMain()
 
-	session, err := discordgo.New("Bot " + "TOKEN")
+	session, err := discordgo.New("Bot " + os.Getenv("TOKEN"))
 	if err != nil {
-		fmt.Println("error with creating discord session")
+		errorC.Println("error with creating discord session")
 		return
 	}
 
 	// Defining intents
 	session.Identify.Intents = discordgo.IntentsGuildMembers | discordgo.IntentsGuilds | discordgo.IntentsGuildMessages
-
-	// Adding handlers
+	// // Adding handlers
 	session.AddHandler(handlers.MessageCreate)
+	// session.AddHandler(handlers.Ready)
 
 	// Starts discord session
 	err = session.Open()
 	if err != nil {
-		fmt.Println(err)
+		errorC.Println(err)
 		return
 	}
 
 	// Wait here until CTRL-C or other term signal is received.
-	fmt.Println("Passador rodando! Pressiona CTRL+C para sair.")
+	successC.Println("Passador Inicializando! Pressione CTRL+C para sair.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, syscall.SIGTERM)
 	<-sc
